@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex Pure JS</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+    
+    <div class="container">
+        <h1>Pokedex App</h1>
+        <ul id="pokedex">
+
+        </ul>
+    </div>
+    <!-- <footer>
+        <p>
+            <a href="#toTop">Back To Top</a>
+        </p>
+    </footer> -->
+
+
+    <script>
+
+        // Credits & Original Code by James Quick : https://codepen.io/jamesqquick/pen/NWKaNQz
+        /* What have to day
+            1. fetch data with fetch();
+            2. Promises
+            3. map data with .map()
+            4. js scroll to top 
+        */
+
+        const pokedex = document.getElementById('pokedex');
+
+        const fetchPokemon = () => {
+            const promises = [];
+            for (let i = 1; i <= 150; i++) {
+                const url = `https://pokeapi.co/api/v2/pokemon/${i}`; // back tick - tempalte literals / template string
+                promises.push(fetch(url).then((res) => res.json()));
+            }
+
+            Promise.all(promises).then((results) => {
+                const pokemon = results.map((result) => ({
+                    id: result.id,
+                    name: result.name,
+                    image: result.sprites['front_default'],
+                    type: result.types.map((type) => type.type.name).join(', ')
+                }));
+                displayPokemon(pokemon);
+            });
+        };
+
+        const displayPokemon = (pokemon) => {
+            console.log(pokemon);
+            const pomemonHTMLString = pokemon.map((pokedata) => `
+                <li class="card">
+                    <img class="card-image" src="${pokedata.image}">
+                    <h2 class="card-title">${pokedata.id} ${pokedata.name}</h2>
+                    <p class="card-subtitle">${pokedata.type}</p>
+                </li>
+            `).join('');
+            pokedex.innerHTML = pomemonHTMLString;
+        };
+
+        fetchPokemon();
+
+
+        //Get the button
+        var mybutton = document.getElementById("myBtn");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {
+            scrollFunction()
+        };
+
+        function scrollFunction() {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            mybutton.style.display = "block";
+        } else {
+            mybutton.style.display = "none";
+        }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+</body>
+</html>
